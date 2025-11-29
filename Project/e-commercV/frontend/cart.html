@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce - Panier</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><a href="/" style="color: white; text-decoration: none;">E-Shop</a></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/products" class="nav-link">Produits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/cart" class="nav-link active">Panier (<span id="cart-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/wishlist" class="nav-link">Wishlist (<span id="wishlist-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item" id="auth-section">
+                        <a href="/login" class="nav-link">Connexion</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h1 class="page-title">Mon Panier</h1>
+            
+            <div id="cart-content">
+                <div id="cart-items">
+                    <!-- Les articles du panier seront chargés ici -->
+                </div>
+                
+                <div class="cart-summary" style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-top: 2rem;">
+                    <h3>Résumé de la commande</h3>
+                    <div class="summary-line">
+                        <span>Total articles:</span>
+                        <span id="total-items">0</span>
+                    </div>
+                    <div class="summary-line" style="font-size: 1.5rem; font-weight: bold; border-top: 2px solid #eee; padding-top: 1rem; margin-top: 1rem;">
+                        <span>Total:</span>
+                        <span id="total-amount">0,00 €</span>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <button onclick="clearCart()" class="btn btn-danger" style="margin-right: 1rem;">Vider le panier</button>
+                        <button onclick="checkout()" class="btn btn-success">Passer la commande</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="empty-cart" style="display: none;">
+                <div class="empty-state">
+                    <h3>Votre panier est vide</h3>
+                    <p>Découvrez nos produits et ajoutez-les à votre panier</p>
+                    <a href="/products" class="btn btn-primary">Voir les produits</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de commande -->
+    <div id="checkout-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 10px; width: 90%; max-width: 500px;">
+            <h3>Finaliser la commande</h3>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="shipping-address">Adresse de livraison :</label>
+                    <textarea id="shipping-address" name="shipping-address" class="form-control" rows="3" required></textarea>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <button type="button" onclick="closeCheckoutModal()" class="btn btn-secondary" style="margin-right: 1rem;">Annuler</button>
+                    <button type="submit" class="btn btn-success">Confirmer la commande</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/cart.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce - Accueil</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1>E-Shop</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/products" class="nav-link">Produits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/cart" class="nav-link">Panier (<span id="cart-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/wishlist" class="nav-link">Wishlist (<span id="wishlist-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item" id="auth-section">
+                        <a href="/login" class="nav-link">Connexion</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Bienvenue sur E-Shop</h2>
+                <p>Découvrez notre sélection de produits de qualité</p>
+                <a href="/products" class="cta-button">Voir les produits</a>
+            </div>
+        </section>
+
+        <section class="categories">
+            <h2>Nos Catégories</h2>
+            <div class="category-grid" id="categories-grid">
+                <!-- Les catégories seront chargées dynamiquement -->
+            </div>
+        </section>
+
+        <section class="featured-products">
+            <h2>Produits en Vedette</h2>
+            <div class="products-grid" id="featured-products-grid">
+                <!-- Les produits seront chargés dynamiquement -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>E-Shop</h3>
+                <p>Votre boutique en ligne de confiance</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens Utiles</h3>
+                <ul>
+                    <li><a href="/admin/dashboard">Administration</a></li>
+                    <li><a href="/admin/add-product">Ajouter Produit</a></li>
+                    <li><a href="/admin/add-user">Créer Utilisateur</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: contact@eshop.com</p>
+                <p>Téléphone: 01 23 45 67 89</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/common.js"></script>
+    <script src="js/home.js"></script>
+</body>
+</html>

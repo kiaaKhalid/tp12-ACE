@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce - Produits</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><a href="/" style="color: white; text-decoration: none;">E-Shop</a></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/products" class="nav-link active">Produits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/cart" class="nav-link">Panier (<span id="cart-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/wishlist" class="nav-link">Wishlist (<span id="wishlist-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item" id="auth-section">
+                        <a href="/login" class="nav-link">Connexion</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h1 class="page-title">Nos Produits</h1>
+            
+            <div class="search-bar">
+                <input type="text" id="search-input" class="search-input" placeholder="Rechercher des produits...">
+                <button onclick="performSearch()" class="btn btn-primary">Rechercher</button>
+            </div>
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="category-filter">Catégorie :</label>
+                    <select id="category-filter" class="form-control">
+                        <option value="">Toutes les catégories</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="sort-filter">Tri :</label>
+                    <select id="sort-filter" class="form-control">
+                        <option value="">Par défaut</option>
+                        <option value="price_asc">Prix croissant</option>
+                        <option value="price_desc">Prix décroissant</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="limit-filter">Résultats :</label>
+                    <select id="limit-filter" class="form-control">
+                        <option value="">Tous</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                
+                <button onclick="applyFilters()" class="btn btn-secondary">Appliquer</button>
+                <button onclick="clearFilters()" class="btn btn-warning">Effacer</button>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <p>Chargement des produits...</p>
+            </div>
+            
+            <div class="products-grid" id="products-grid">
+                <!-- Les produits seront chargés ici -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>E-Shop</h3>
+                <p>Votre boutique en ligne de confiance</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens Utiles</h3>
+                <ul>
+                    <li><a href="/admin/dashboard">Administration</a></li>
+                    <li><a href="/admin/add-product">Ajouter Produit</a></li>
+                    <li><a href="/admin/add-user">Créer Utilisateur</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/common.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>

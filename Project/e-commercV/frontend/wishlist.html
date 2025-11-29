@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce - Wishlist</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><a href="/" style="color: white; text-decoration: none;">E-Shop</a></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/products" class="nav-link">Produits</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/cart" class="nav-link">Panier (<span id="cart-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/wishlist" class="nav-link active">Wishlist (<span id="wishlist-count">0</span>)</a>
+                    </li>
+                    <li class="nav-item" id="auth-section">
+                        <a href="/login" class="nav-link">Connexion</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h1 class="page-title">Ma Liste de Souhaits</h1>
+            
+            <div id="wishlist-content">
+                <div id="wishlist-items">
+                    <!-- Les articles de la wishlist seront chargés ici -->
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button onclick="clearWishlist()" class="btn btn-danger">Vider la wishlist</button>
+                    <button onclick="moveAllToCart()" class="btn btn-success">Tout ajouter au panier</button>
+                </div>
+            </div>
+            
+            <div id="empty-wishlist" style="display: none;">
+                <div class="empty-state">
+                    <h3>Votre wishlist est vide</h3>
+                    <p>Ajoutez des produits à votre liste de souhaits pour les retrouver facilement</p>
+                    <a href="/products" class="btn btn-primary">Découvrir nos produits</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/common.js"></script>
+    <script src="js/wishlist.js"></script>
+</body>
+</html>

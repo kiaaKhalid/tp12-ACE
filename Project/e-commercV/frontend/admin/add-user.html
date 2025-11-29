@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce - Créer Utilisateur</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><a href="/" style="color: white; text-decoration: none;">E-Shop Admin</a></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Retour au site</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/dashboard" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/add-product" class="nav-link">Ajouter Produit</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/add-user" class="nav-link active">Créer Utilisateur</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h1 class="page-title">Créer un Utilisateur</h1>
+            
+            <div class="alert alert-warning">
+                <strong>Page publique :</strong> Cette page est accessible sans authentification pour des tests.
+            </div>
+            
+            <form id="create-user-form">
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur :</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email :</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                    <small>Minimum 3 caractères (sécurité faible intentionnelle)</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Rôle :</label>
+                    <select id="role" name="role" class="form-control">
+                        <option value="user">Utilisateur</option>
+                        <option value="admin">Administrateur</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="first_name">Prénom :</label>
+                    <input type="text" id="first_name" name="first_name" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Nom :</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Adresse :</label>
+                    <textarea id="address" name="address" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Téléphone :</label>
+                    <input type="tel" id="phone" name="phone" class="form-control">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Créer l'utilisateur</button>
+            </form>
+            
+            <div style="margin-top: 2rem;">
+                <h3>Création rapide via URL (vulnérabilité)</h3>
+                <p>Testez la création d'utilisateur directement via URL :</p>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; font-family: monospace;">
+                    /api/users/create?username=test&email=test@example.com&password=123&role=admin
+                </div>
+                <button onclick="testDirectCreation()" class="btn btn-danger">Tester création directe</button>
+            </div>
+
+            <div style="margin-top: 2rem;">
+                <h3>Tests d'injection SQL</h3>
+                <button onclick="testSQLInjection()" class="btn btn-warning">Test injection dans création</button>
+                <button onclick="loadUsersWithInjection()" class="btn btn-warning">Test injection dans liste</button>
+                <div id="sql-test-results" style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin-top: 1rem; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/common.js"></script>
+    <script>
+        // Gestion du formulaire de création d'utilisateur
+        document.getElementById('create-user-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const userData = Object.fromEntries(formData);
+            
+            try {
+                const { data } = await apiRequest('/admin/create-admin', {
+                    method: 'POST',
+                    body: JSON.stringify(userData)
+                });
+                
+                if (data.success) {
+                    showAlert('Utilisateur créé avec succès !');
+                    this.reset(); // Vider le formulaire
+                } else {
+                    showAlert(data.error || 'Erreur création utilisateur', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur création utilisateur:', error);
+                showAlert('Erreur création utilisateur', 'error');
+            }
+        });
+
+        // Test de création directe via URL (vulnérabilité)
+        async function testDirectCreation() {
+            const testUrl = '/api/users/create?username=hacker&email=hacker@test.com&password=123&role=admin';
+            
+            try {
+                const response = await fetch(`http://localhost:3000${testUrl}`);
+                const data = await response.json();
+                
+                const resultsDiv = document.getElementById('sql-test-results');
+                resultsDiv.textContent = 'Test création directe:\n' + JSON.stringify(data, null, 2);
+                
+                if (data.success) {
+                    showAlert('Utilisateur créé via URL publique !', 'warning');
+                } else {
+                    showAlert('Échec création directe: ' + (data.error || 'Erreur inconnue'), 'error');
+                }
+            } catch (error) {
+                console.error('Erreur test création:', error);
+                const resultsDiv = document.getElementById('sql-test-results');
+                resultsDiv.textContent = 'Erreur test création:\n' + error.message;
+            }
+        }
+
+        // Test d'injection SQL dans la création
+        async function testSQLInjection() {
+            const maliciousData = {
+                username: "admin'; DROP TABLE users; --",
+                email: "test@test.com",
+                password: "123",
+                role: "admin",
+                first_name: "SQL",
+                last_name: "Injection"
+            };
+            
+            try {
+                const { data } = await apiRequest('/admin/create-admin', {
+                    method: 'POST',
+                    body: JSON.stringify(maliciousData)
+                });
+                
+                const resultsDiv = document.getElementById('sql-test-results');
+                resultsDiv.textContent = 'Test injection SQL création:\n' + JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                console.error('Erreur test injection:', error);
+                const resultsDiv = document.getElementById('sql-test-results');
+                resultsDiv.textContent = 'Test injection SQL - Erreur:\n' + error.message;
+            }
+        }
+
+        // Test d'injection SQL dans la recherche d'utilisateurs
+        async function loadUsersWithInjection() {
+            const injectionTerms = [
+                "' OR '1'='1",
+                "'; SELECT * FROM users WHERE '1'='1",
+                "' UNION SELECT * FROM users --"
+            ];
+            
+            let results = 'Tests d\'injection SQL dans la recherche:\n\n';
+            
+            for (const term of injectionTerms) {
+                try {
+                    const { data } = await apiRequest(`/api/users/search/${encodeURIComponent(term)}`);
+                    results += `Terme: ${term}\n`;
+                    results += `Résultat: ${JSON.stringify(data, null, 2)}\n\n`;
+                } catch (error) {
+                    results += `Terme: ${term}\n`;
+                    results += `Erreur: ${error.message}\n\n`;
+                }
+            }
+            
+            const resultsDiv = document.getElementById('sql-test-results');
+            resultsDiv.textContent = results;
+        }
+
+        // Pré-remplir des données de test
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').value = 'testuser';
+            document.getElementById('email').value = 'test@example.com';
+            document.getElementById('password').value = '123';
+            document.getElementById('first_name').value = 'Test';
+            document.getElementById('last_name').value = 'User';
+        });
+    </script>
+</body>
+</html>

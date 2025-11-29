@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce - Ajouter Produit</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><a href="/" style="color: white; text-decoration: none;">E-Shop Admin</a></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">Retour au site</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/dashboard" class="nav-link">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/add-product" class="nav-link active">Ajouter Produit</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/add-user" class="nav-link">Créer Utilisateur</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h1 class="page-title">Ajouter un Produit</h1>
+            
+            <form id="add-product-form" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name">Nom du produit :</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description :</label>
+                    <textarea id="description" name="description" class="form-control" rows="4"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Prix (€) :</label>
+                    <input type="number" id="price" name="price" class="form-control" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="stock">Stock :</label>
+                    <input type="number" id="stock" name="stock" class="form-control" min="0" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="category_id">Catégorie :</label>
+                    <select id="category_id" name="category_id" class="form-control">
+                        <option value="">Aucune catégorie</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="image">Image du produit :</label>
+                    <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                    <small>Formats acceptés: JPG, PNG, GIF. Taille max: 100MB</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Ajouter le produit</button>
+            </form>
+            
+            <div style="margin-top: 2rem;">
+                <h3>Actions rapides</h3>
+                <button onclick="addCategory()" class="btn btn-secondary">Ajouter une catégorie</button>
+                <button onclick="loadProducts()" class="btn btn-warning">Voir tous les produits</button>
+            </div>
+            
+            <div id="products-list" style="margin-top: 2rem;"></div>
+        </div>
+    </main>
+
+    <script src="../js/common.js"></script>
+    <script>
+        // Charger les catégories pour le select
+        async function loadCategories() {
+            try {
+                const { data } = await apiRequest('/admin/categories');
+                
+                if (data.success && data.categories) {
+                    const categorySelect = document.getElementById('category_id');
+                    
+                    data.categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur chargement catégories:', error);
+            }
+        }
+
+        // Ajouter une catégorie
+        async function addCategory() {
+            const name = prompt('Nom de la catégorie:');
+            const description = prompt('Description:');
+            
+            if (!name) return;
+            
+            try {
+                const { data } = await apiRequest('/admin/add-category', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        name: name,
+                        description: description || ''
+                    })
+                });
+                
+                if (data.success) {
+                    showAlert('Catégorie ajoutée avec succès');
+                    // Recharger les catégories
+                    document.getElementById('category_id').innerHTML = '<option value="">Aucune catégorie</option>';
+                    loadCategories();
+                } else {
+                    showAlert(data.error || 'Erreur ajout catégorie', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur ajout catégorie:', error);
+                showAlert('Erreur ajout catégorie', 'error');
+            }
+        }
+
+        // Charger tous les produits
+        async function loadProducts() {
+            try {
+                const { data } = await apiRequest('/api/products');
+                
+                const productsList = document.getElementById('products-list');
+                
+                if (data.success && data.products) {
+                    productsList.innerHTML = `
+                        <h3>Liste des produits (${data.products.length})</h3>
+                        <div style="display: grid; gap: 1rem;">
+                            ${data.products.map(product => `
+                                <div style="background: white; padding: 1rem; border-radius: 5px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong>${product.name}</strong><br>
+                                        <small>Prix: ${formatPrice(product.price)} - Stock: ${product.stock}</small>
+                                    </div>
+                                    <div>
+                                        <button onclick="editProduct(${product.id})" class="btn btn-warning">Modifier</button>
+                                        <button onclick="deleteProduct(${product.id})" class="btn btn-danger">Supprimer</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erreur chargement produits:', error);
+            }
+        }
+
+        // Modifier un produit
+        function editProduct(productId) {
+            const newPrice = prompt('Nouveau prix:');
+            const newStock = prompt('Nouveau stock:');
+            
+            if (newPrice === null && newStock === null) return;
+            
+            const updateData = {};
+            if (newPrice !== null && !isNaN(newPrice)) updateData.price = parseFloat(newPrice);
+            if (newStock !== null && !isNaN(newStock)) updateData.stock = parseInt(newStock);
+            
+            fetch(`/admin/edit-product/${productId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Produit modifié');
+                    loadProducts();
+                } else {
+                    showAlert(data.error || 'Erreur modification', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showAlert('Erreur modification', 'error');
+            });
+        }
+
+        // Supprimer un produit
+        async function deleteProduct(productId) {
+            if (!confirm('Supprimer ce produit ?')) return;
+            
+            try {
+                const { data } = await apiRequest(`/admin/delete-product/${productId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (data.success) {
+                    showAlert('Produit supprimé');
+                    loadProducts();
+                } else {
+                    showAlert(data.error || 'Erreur suppression', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur suppression:', error);
+                showAlert('Erreur suppression', 'error');
+            }
+        }
+
+        // Gestion du formulaire d'ajout
+        document.getElementById('add-product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/admin/add-product', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAlert('Produit ajouté avec succès !');
+                    this.reset(); // Vider le formulaire
+                    loadProducts(); // Recharger la liste
+                } else {
+                    showAlert(data.error || 'Erreur ajout produit', 'error');
+                }
+            } catch (error) {
+                console.error('Erreur ajout produit:', error);
+                showAlert('Erreur ajout produit', 'error');
+            }
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+        });
+    </script>
+</body>
+</html>
